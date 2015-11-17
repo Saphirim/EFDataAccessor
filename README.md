@@ -1,5 +1,5 @@
 # EFDataAccessor
-A simple, mostly async DataAccessor for Entity Framework. Allowing standard CRUD Operations in complexe data models with parallel database calls.
+A simple, mostly async DataAccessor for Entity Framework. Allowing standard CRUD Operations in complex data models with parallel database calls.
 
 Including a sample project and corresponding unit tests.
 
