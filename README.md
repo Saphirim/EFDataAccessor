@@ -20,8 +20,8 @@ Feel free to fork, improve or make comments to this project and help to fight th
 
 For pracical usage, make sure, your DbContext is created like this:
 
-{
-var context = new DataContext
+  {
+    var context = new DataContext
                 {
                     Configuration =
                     {
@@ -30,4 +30,4 @@ var context = new DataContext
                         LazyLoadingEnabled = false
                     }
                 };
-}
+  }
