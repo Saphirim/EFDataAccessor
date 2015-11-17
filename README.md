@@ -12,7 +12,7 @@ The pure example from Mr. Sanders was modified, refactored and made async where 
 
 Please refere to the sample project on how to use the DataAccessor in your own Project.
 
-To run the unit tests, MSSQLLOCALDB should be installed and accessible via the system authentification:
+To run the unit tests, MSSQLLOCALDB should be installed and accessible by system authentification:
 
 https://msdn.microsoft.com/de-de/sqlserver2014express.aspx
 
