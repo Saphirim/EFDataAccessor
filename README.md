@@ -19,12 +19,21 @@ https://msdn.microsoft.com/de-de/sqlserver2014express.aspx
 Feel free to fork, improve or make comments to this project and help to fight the nasty problems about threadsafety, detached many-to-many relations and other points of interest while handling the Entity Framework.
 
 For pracical usage, make sure, your DbContext is created like this:
+
 var context = new DataContext
+
                 {
+                
                     Configuration =
+                    
                     {
+                    
                         ProxyCreationEnabled = false,
+                        
                         AutoDetectChangesEnabled = true,
+                        
                         LazyLoadingEnabled = false
+                        
                     }
+                    
                 };
