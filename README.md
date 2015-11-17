@@ -23,17 +23,10 @@ For pracical usage, make sure, your DbContext is created like this:
 var context = new DataContext
 
                 {
-                
                     Configuration =
-                    
                     {
-                    
                         ProxyCreationEnabled = false,
-                        
                         AutoDetectChangesEnabled = true,
-                        
                         LazyLoadingEnabled = false
-                        
                     }
-                    
                 };
