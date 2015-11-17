@@ -3,7 +3,7 @@ A simple, mostly async DataAccessor for Entity Framework. Allowing standard CRUD
 
 Including a sample project and corresponding unit tests.
 
-This project and the idea behind relies heavily on serveral blog posts from Rob Sanders (http://stackexchange.com/users/9903/robs). Here's one from his featured articles about the DataAccessor: http://sanderstechnology.com/2014/update-entity-framework-generic-data-access/12959/#.VktLe_kvdhE
+This project and the idea behind relies heavily on serveral blog posts from Rob Sanders (http://stackexchange.com/users/9903/robs). Here's one of his featured articles about the DataAccessor: http://sanderstechnology.com/2014/update-entity-framework-generic-data-access/12959/#.VktLe_kvdhE
 
 The pure example from Mr. Sanders was modified, refactored and made async where it was possible. Some bugs were fixed also.
 
