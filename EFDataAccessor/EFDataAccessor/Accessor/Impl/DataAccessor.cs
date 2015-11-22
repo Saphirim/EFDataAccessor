@@ -159,7 +159,7 @@ namespace EFDataAccessor.EFDataAccessor.Accessor.Impl
             }
             catch (NotSupportedException ex)
             {
-                Debug.WriteLine($"An attempt was made to try and modify a relationship which is not supported.  Error: {ex.Message}");
+                Debug.WriteLine("An attempt was made to try and modify a relationship which is not supported.  Error: " + ex.Message);
             }
         }
 
@@ -239,7 +239,7 @@ namespace EFDataAccessor.EFDataAccessor.Accessor.Impl
             if (results.Any())
             {
                 var errorMessages = results.Select(result => result.ErrorMessage).Aggregate((a, b) => a + ", " + b);
-                throw new ValidationException($"Can not apply current changes, validation has failed for one or more entities: {errorMessages}");
+                throw new ValidationException("Can not apply current changes, validation has failed for one or more entities: " + errorMessages);
             }
 
             try
@@ -251,14 +251,14 @@ namespace EFDataAccessor.EFDataAccessor.Accessor.Impl
                 //ignore anything previously handled
                 foreach (var item in items.Where(x => x.ObjectState != EObjectState.Processed))
                 {
-                    Debug.WriteLine($"Item: {item.ObjectState}|{item.GetType()}");
+                    Debug.WriteLine("Item: " + item.ObjectState + item.GetType());
 
                     ProcessEntityState(dbSet, item);
 
                     foreach (var entry in DataContext.ChangeTracker.Entries<IObjectStateEntity>()
                         .Where(c => c.Entity.ObjectState != EObjectState.Processed))
                     {
-                        Debug.WriteLine($"Entry: {entry.Entity.ObjectState}|{entry.Entity.GetType()}");
+                        Debug.WriteLine("Entry: " + entry.Entity.ObjectState + entry.Entity.GetType());
 
                         var y = DataContext.Entry(entry.Entity);
                         y.State = HelperFunctions.ConvertState(entry.Entity.ObjectState);

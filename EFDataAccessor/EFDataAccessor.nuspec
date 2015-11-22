@@ -9,7 +9,7 @@
     <licenseUrl>https://github.com/Saphirim/EFDataAccessor/blob/master/LICENSE</licenseUrl>
     <projectUrl>https://github.com/Saphirim/EFDataAccessor</projectUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
-    <description>A simple, mostly async DataAccessor for Entity Framework. Allowing standard CRUD Operations in complex data models with parallel database calls.</description>
+    <description>A simple, mostly async DataAccessor for Entity Framework. Allowing standard CRUD Operations in complex data models with parallel database reads.</description>
     <releaseNotes>Initial Release</releaseNotes>
     <copyright>Copyright 2015</copyright>
     <tags>Entity Framework EntityFramework DataAccessor DataContext Threadsafe Detached Many-To-Many ManyToMany</tags>
