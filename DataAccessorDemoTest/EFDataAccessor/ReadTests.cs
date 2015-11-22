@@ -28,17 +28,19 @@ namespace DataAccessorDemoTest.EFDataAccessor
             var mEntity = await DatabaseInitializeHelper.CreateMEntityWithSomeNEntites();
             var nEntity = await DatabaseInitializeHelper.CreateNEntityWithSomeOtherEntities();
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.ModifyRelatedEntities(mEntity, mE => mE.NEntities, EntityState.Added, nEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true after Modifying the Model!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var reloadedMEntity = await dataAccessor.Set<MEntity>(mE => mE.NEntities, mE => mE.NEntities.Select(nE => nE.OtherEntities))
                     .SingleAsync(mE => mE.Id.Equals(mEntity.Id));
-                Assert.IsTrue(mEntity.NEntities.Any(nE => nE.OtherEntities.Count > 0));
+                Assert.IsTrue(reloadedMEntity.NEntities.Any(nE => nE.OtherEntities.Count > 0));
             }
         }
 
@@ -49,7 +51,7 @@ namespace DataAccessorDemoTest.EFDataAccessor
             var mEntity2 = await DatabaseInitializeHelper.CreateMEntityWithSomeNEntites();
             var mEntity3 = await DatabaseInitializeHelper.CreateMEntityWithSomeNEntites();
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var mEntities = await dataAccessor.GetEntitiesAsync<MEntity>(mE => mE.Id.Equals(mEntity1.Id) || mE.Id.Equals(mEntity2.Id),
                     mE => mE.NEntities);

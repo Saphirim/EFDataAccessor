@@ -64,18 +64,21 @@ namespace DataAccessorDemoTest.EFDataAccessor
                 NEntityId = nEntity.Id
             };
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(nEntity);
                 dataAccessor.ModifyRelatedEntities(mEntity, mE => mE.NEntities, EntityState.Added, nEntity);
-                using (IDataAccessor secondDataAccessor = new DataDataAccessor((DataAccessorBase)dataAccessor))
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
+                using (IDataAccessor secondDataAccessor = new DataAccessor((DataAccessorBase)dataAccessor))
                 {
                     secondDataAccessor.InsertOrUpdate(otherEntity);
+                    Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                     await secondDataAccessor.SaveChangesAsync();
+                    Assert.IsFalse(secondDataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
                 }
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var reloadedMEntity =
                     await

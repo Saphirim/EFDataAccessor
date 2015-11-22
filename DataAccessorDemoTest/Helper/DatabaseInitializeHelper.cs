@@ -26,7 +26,7 @@ namespace DataAccessorDemoTest.Helper
                 ObjectState = EObjectState.Added
             };
 
-            using (IDataAccessor dataAccesor = new DataDataAccessor(DbContextFactory))
+            using (IDataAccessor dataAccesor = new DataAccessor(DbContextFactory))
             {
                 dataAccesor.InsertOrUpdate(newMEntity);
                 await dataAccesor.SaveChangesAsync();
@@ -42,7 +42,7 @@ namespace DataAccessorDemoTest.Helper
                 ObjectState = EObjectState.Added
             };
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(DbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(DbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(newNEntity);
                 await dataAccessor.SaveChangesAsync();
@@ -74,7 +74,7 @@ namespace DataAccessorDemoTest.Helper
             mEntity.NEntities.Add(firstNEntity);
             mEntity.NEntities.Add(secondNEntitiy);
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(DbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(DbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(mEntity);
                 await dataAccessor.SaveChangesAsync();
@@ -105,7 +105,7 @@ namespace DataAccessorDemoTest.Helper
             nEntity.OtherEntities.Add(firstOtherEntity);
             nEntity.OtherEntities.Add(secondOtherEntity);
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(DbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(DbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(nEntity);
                 await dataAccessor.SaveChangesAsync();

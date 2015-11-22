@@ -32,13 +32,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
             mEntity.Name = updatedMEntityName;
             mEntity.ObjectState = EObjectState.Modified;
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(mEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 Assert.IsTrue((await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Id.Equals(mEntity.Id))).Name.Equals(updatedMEntityName));
             }
@@ -59,13 +61,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
             mEntity.NEntities.Add(newNEntity);
             mEntity.ObjectState = EObjectState.Modified;
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(mEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var loadedMEntity = await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Id.Equals(mEntity.Id), mE => mE.NEntities);
                 Assert.AreEqual(1, loadedMEntity.NEntities.Count);
@@ -87,14 +91,16 @@ namespace DataAccessorDemoTest.EFDataAccessor
             //Update through parent requires to set the parent Objectstate as "Modified"
             mEntity.ObjectState = EObjectState.Modified;
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 //Just passing the parent to the dataAccessor will do the Job
                 dataAccessor.InsertOrUpdate(mEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var loadedMEntity = await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Id.Equals(mEntity.Id), mE => mE.NEntities);
                 Assert.AreEqual(updatedNEntityName, loadedMEntity.NEntities.Single(nE => nE.Id.Equals(updatingNEntity.Id)).Name);
@@ -112,14 +118,16 @@ namespace DataAccessorDemoTest.EFDataAccessor
             updatingNEntity.Name = updatedNEntityName;
             updatingNEntity.ObjectState = EObjectState.Modified;
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 //Just passing the child to the dataAccessor might give us some performance improvement
                 dataAccessor.InsertOrUpdate(updatingNEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var loadedMEntity = await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Id.Equals(mEntity.Id), mE => mE.NEntities);
                 Assert.AreEqual(updatedNEntityName, loadedMEntity.NEntities.Single(nE => nE.Id.Equals(updatingNEntity.Id)).Name);
@@ -132,13 +140,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
             var mEntity = await DatabaseInitializeHelper.CreateSimpleMEntity();
             var nEntity = await DatabaseInitializeHelper.CreateSimpleNEntity();
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.ModifyRelatedEntities(mEntity, mE => mE.NEntities, EntityState.Added, nEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var loadedMEntity = await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Id.Equals(mEntity.Id), mE => mE.NEntities);
                 Assert.AreEqual(nEntity.Id,loadedMEntity.NEntities.First().Id);
@@ -153,25 +163,29 @@ namespace DataAccessorDemoTest.EFDataAccessor
             var doubleUsedNEntity = firstMEntity.NEntities.First();
 
             //NEntity einem zweiten MEntity-Objekt hinzufügen
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.ModifyRelatedEntities(secondMEntity, mE => mE.NEntities, EntityState.Added, doubleUsedNEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
             //Sicherstellen, dass dies funktioniert hat
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var reloadedSecondMEntity = await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Id.Equals(secondMEntity.Id), mE => mE.NEntities);
                 Assert.IsTrue(reloadedSecondMEntity.NEntities.Any(nE => nE.Id.Equals(doubleUsedNEntity.Id)));
             }
             //Entfernen des nun mehrfach verwendeten NEntity-Objekts vom ersten MEntity-Objekt
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.ModifyRelatedEntities(firstMEntity, mE => mE.NEntities, EntityState.Deleted, doubleUsedNEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
             //Testerfolg prüfen
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var reloadedFirstEntity = await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Id.Equals(firstMEntity.Id), mE => mE.NEntities);
                 Assert.IsFalse(reloadedFirstEntity.NEntities.Any(nE => nE.Id.Equals(doubleUsedNEntity.Id)));
@@ -193,13 +207,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
                 NEntity = nEntity
             };
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(newOtherEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var loadedNEntity = await dataAccessor.GetSingleAsync<NEntity>(nE => nE.Id.Equals(nEntity.Id), nE => nE.OtherEntities);
                 Assert.AreEqual(1, loadedNEntity.OtherEntities.Count);
@@ -219,13 +235,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
             switchtingOtherEntity.ObjectState = EObjectState.Modified;
 
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(switchtingOtherEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var reloadedSourceEntity =
                     await dataAccessor.GetSingleAsync<NEntity>(nE => nE.Id.Equals(sourceNEntity.Id), nE => nE.OtherEntities);

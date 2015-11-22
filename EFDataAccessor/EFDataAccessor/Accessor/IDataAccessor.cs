@@ -11,6 +11,11 @@ namespace EFDataAccessor.EFDataAccessor.Accessor
     public interface IDataAccessor : IDisposable
     {
         /// <summary>
+        /// Returns true if the DataContext currently used by the DataAccessor has unsaved Changes.
+        /// </summary>
+        bool HasPendingChanges { get; }
+
+        /// <summary>
         /// Returns a base query with no filters or restrictions applied, that can be used while the DataAccessor is not disposed.
         /// </summary>
         /// <typeparam name="TEntity">Type of the underlying DbSet</typeparam>

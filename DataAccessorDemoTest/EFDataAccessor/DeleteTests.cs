@@ -27,7 +27,7 @@ namespace DataAccessorDemoTest.EFDataAccessor
         public async Task DeleteSimpleEntity()
         {
             var mEntity = await DatabaseInitializeHelper.CreateSimpleMEntity();
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 //Sicherstellen, dass die MEntity auch in der DB bekannt ist.
                 Assert.IsTrue(await dataAccessor.Set<MEntity>().AnyAsync(mE => mE.Id.Equals(mEntity.Id)));
@@ -36,14 +36,16 @@ namespace DataAccessorDemoTest.EFDataAccessor
 
 
             //Neuen DataAccessor holen, damit die Operation nicht durch LocalCache verfälscht wird
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.Delete(mEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 //Sicherstellen, dass die MEntity auch in der DB bekannt ist.
                 Assert.IsFalse(await dataAccessor.Set<MEntity>().AnyAsync(mE => mE.Id.Equals(mEntity.Id)));
@@ -57,13 +59,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
             var mEntity = await DatabaseInitializeHelper.CreateMEntityWithSomeNEntites();
             var deletingNEntity = mEntity.NEntities.First();
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.Delete(deletingNEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var reloadedMEntity =
                     await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Id.Equals(mEntity.Id), mE => mE.NEntities);
@@ -78,12 +82,14 @@ namespace DataAccessorDemoTest.EFDataAccessor
             var nEntity = await DatabaseInitializeHelper.CreateNEntityWithSomeOtherEntities();
             var deletingOtherEntity = nEntity.OtherEntities.First();
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.Delete(deletingOtherEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var reloadedNEntity =
                     await dataAccessor.GetSingleAsync<NEntity>(nE => nE.Id.Equals(nEntity.Id), nE => nE.OtherEntities);
@@ -96,12 +102,14 @@ namespace DataAccessorDemoTest.EFDataAccessor
         {
             var nEntity = await DatabaseInitializeHelper.CreateNEntityWithSomeOtherEntities();
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.Delete(nEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 Assert.IsFalse(await dataAccessor.Set<NEntity>().AnyAsync(nE => nE.Id.Equals(nEntity.Id)));
             }
@@ -123,14 +131,16 @@ namespace DataAccessorDemoTest.EFDataAccessor
             mEntity.NEntities.Add(newNEntity);
             mEntity.ObjectState = EObjectState.Modified;
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(mEntity);
                 dataAccessor.ModifyRelatedEntities(mEntity, mE => mE.NEntities, EntityState.Added, existingNEntity);
                 dataAccessor.ModifyRelatedEntities(mEntity, mE => mE.NEntities, EntityState.Deleted, existingNEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 var reloadedMEntity = await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Id.Equals(mEntity.Id), mE => mE.NEntities);
                 var reloadedNEntity = await dataAccessor.GetSingleAsync<NEntity>(nE => nE.Id.Equals(existingNEntity.Id), nE => nE.MEntities);
