@@ -34,13 +34,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
                 ObjectState = EObjectState.Added
             };
 
-            using (IDataAccessor dataAccesor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
-                dataAccesor.InsertOrUpdate(newMEntity);
-                await dataAccesor.SaveChangesAsync();
+                dataAccessor.InsertOrUpdate(newMEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
+                await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 Assert.IsTrue(await dataAccessor.Set<MEntity>().AnyAsync(mE => mE.Name == newEntityName));
             }
@@ -74,13 +76,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
             mEntity.NEntities.Add(firstNEntity);
             mEntity.NEntities.Add(secondNEntitiy);
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(mEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 Assert.IsTrue(await dataAccessor.Set<MEntity>().AnyAsync(mE => mE.Name.EndsWith(mEntityName)));
                 var loadedMEntity = await dataAccessor.GetSingleAsync<MEntity>(entity => entity.Name.EndsWith(mEntityName),
@@ -121,13 +125,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
             nEntity.OtherEntities.Add(firstOtherEntity);
             nEntity.OtherEntities.Add(secondOtherEntity);
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(nEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 Assert.IsTrue(await dataAccessor.Set<NEntity>().AnyAsync(nE => nE.Name.Equals(nEntityName)));
                 var loadedNEntity = await dataAccessor.GetSingleAsync<NEntity>(nE => nE.Name.Equals(nEntityName), entity => entity.OtherEntities);
@@ -193,13 +199,15 @@ namespace DataAccessorDemoTest.EFDataAccessor
                 }
             };
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(mEntity);
+                Assert.IsTrue(dataAccessor.HasPendingChanges, "HasPendingChanges should be true!");
                 await dataAccessor.SaveChangesAsync();
+                Assert.IsFalse(dataAccessor.HasPendingChanges, "HasPendingChanges should be false directly after Saving!");
             }
 
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 Assert.IsTrue(await dataAccessor.Set<MEntity>().AnyAsync(mE => mE.Name.Equals(mEntitiyName)));
                 var loadedMEntity = await dataAccessor.GetSingleAsync<MEntity>(mE => mE.Name.Equals(mEntitiyName),
@@ -219,7 +227,7 @@ namespace DataAccessorDemoTest.EFDataAccessor
                 Name = "InsertMEntityWithSomeNEntitiesWithSomeOtherEntities - otherEntity without navigation property",
                 ObjectState = EObjectState.Added
             };
-            using (IDataAccessor dataAccessor = new DataDataAccessor(_dbContextFactory))
+            using (IDataAccessor dataAccessor = new DataAccessor(_dbContextFactory))
             {
                 dataAccessor.InsertOrUpdate(otherEntity);
                 Assert.Fail("Bei InsertOrUpdate sollte eine Validationexception geflogen sein!");

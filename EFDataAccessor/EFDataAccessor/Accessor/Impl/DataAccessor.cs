@@ -12,14 +12,14 @@ using EFDataAccessor.EFDataAccessor.Model;
 
 namespace EFDataAccessor.EFDataAccessor.Accessor.Impl
 {
-    public class DataDataAccessor : DataAccessorBase
+    public class DataAccessor : DataAccessorBase
     {
         #region Constructors
 
         /// <summary>
         /// Default constructor - passes to the base class for DbContext instantiation
         /// </summary>
-        public DataDataAccessor(IDbContextFactory<DbContext> dbContextFactory) : base(dbContextFactory)
+        public DataAccessor(IDbContextFactory<DbContext> dbContextFactory) : base(dbContextFactory)
         {
         }
 
@@ -27,7 +27,7 @@ namespace EFDataAccessor.EFDataAccessor.Accessor.Impl
         /// Sort of like a copy constructor where we reuse an existing DbContext with a new Data Accessor class
         /// </summary>
         /// <param name="existing">A sort of copy constructor where an existing accessor's DbContext is used by this class instance</param>
-        public DataDataAccessor(DataAccessorBase existing) : base(existing)
+        public DataAccessor(DataAccessorBase existing) : base(existing)
         {
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Entity;
 using System.Data.Entity.Infrastructure;
 using System.Diagnostics.CodeAnalysis;
@@ -12,6 +13,23 @@ namespace EFDataAccessor.EFDataAccessor.Accessor.Impl
 {
     public abstract class DataAccessorBase : IDataAccessor
     {
+        #region Properties
+
+        public bool HasPendingChanges
+        {
+            get
+            {
+                return DataContext.ChangeTracker.Entries().Any(e => e.State == EntityState.Added ||
+                e.State == EntityState.Deleted ||
+                e.State == EntityState.Modified ||
+                ((IObjectContextAdapter)DataContext).ObjectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Added).Any()||
+                ((IObjectContextAdapter)DataContext).ObjectContext.ObjectStateManager.GetObjectStateEntries(EntityState.Deleted).Any()
+                );
+            }
+        }
+
+        #endregion
+
         #region Internal Properties
 
         internal DbContextTransaction Transaction
@@ -23,7 +41,10 @@ namespace EFDataAccessor.EFDataAccessor.Accessor.Impl
         internal DbContext DataContext
         {
             get { return _context; }
-            set { _context = value; }
+            set
+            {
+                _context = value;
+            }
         }
 
         #endregion
@@ -57,7 +78,7 @@ namespace EFDataAccessor.EFDataAccessor.Accessor.Impl
 
         #endregion
 
-        #region public Functions
+        #region public Methods
 
         public abstract void ResetDataAccessor();
 
@@ -125,10 +146,8 @@ namespace EFDataAccessor.EFDataAccessor.Accessor.Impl
         public abstract Task<TEntity> GetSingleOrDefaultAsync<TEntity>(Expression<Func<TEntity, bool>> filter, params Expression<Func<TEntity, object>>[] includedProperties) where TEntity : class, IObjectStateEntity;
         public abstract Task<int> SaveChangesAsync();
         public abstract void InsertOrUpdate<TEntity>(params TEntity[] entities) where TEntity : class, IObjectStateEntity;
-
         public abstract void ModifyRelatedEntities<TParent, TChild>(TParent parent, Expression<Func<TParent, object>> collection, EntityState state,
             params TChild[] children) where TParent : class, IObjectStateEntity where TChild : class, IObjectStateEntity;
-
         public abstract void Delete<TEntity>(params TEntity[] entities) where TEntity : class, IObjectStateEntity;
     }
 }

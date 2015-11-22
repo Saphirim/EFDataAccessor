@@ -15,7 +15,7 @@ namespace EFDataAccessor.EFDataAccessor.Factory.Impl
 
         public IDataAccessor Create()
         {
-            return new DataDataAccessor(_dbContextFactory);
+            return new DataAccessor(_dbContextFactory);
         }
     }
 }
