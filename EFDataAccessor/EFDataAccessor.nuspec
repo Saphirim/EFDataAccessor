@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>EFDataAccessor</id>
+    <version>1.0.0.2</version>
+    <title>EFDataAccessor</title>
+    <authors>Michael Hutterer</authors>
+    <owners>Michael Hutterer</owners>
+    <licenseUrl>https://github.com/Saphirim/EFDataAccessor/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/Saphirim/EFDataAccessor</projectUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>A simple, mostly async DataAccessor for Entity Framework. Allowing standard CRUD Operations in complex data models with parallel database calls.</description>
+    <releaseNotes>Initial Release</releaseNotes>
+    <copyright>Copyright 2015</copyright>
+    <tags>Entity Framework EntityFramework DataAccessor DataContext Threadsafe Detached Many-To-Many ManyToMany</tags>
+	<dependencies>
+		<dependency id="EntityFramework" version="6.0.0.0" />
+	</dependencies>
+  </metadata>
+</package>
