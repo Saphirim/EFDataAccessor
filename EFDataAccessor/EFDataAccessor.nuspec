@@ -2,7 +2,7 @@
 <package >
   <metadata>
     <id>EFDataAccessor</id>
-    <version>1.0.0.2</version>
+    <version>1.0.0.3</version>
     <title>EFDataAccessor</title>
     <authors>Michael Hutterer</authors>
     <owners>Michael Hutterer</owners>
